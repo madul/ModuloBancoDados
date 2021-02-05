@@ -12,3 +12,13 @@ insert into stock (productID, quantity)
 	values (1, 20);
         
 call insertValuesStock();
+
+delimiter $
+create trigger trg_checkStockExists after update on stock for each row
+begin
+	if (new.quantity <= 0) then
+		update products 
+			set products.active = False
+			where products.productID = new.productID;
+	end if;
+end$
